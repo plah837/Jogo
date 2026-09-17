@@ -28,11 +28,48 @@ if (!canvas) {
 
   const clock = new THREE.Clock();
 
-  // Luz ambiente
+  let cameraYaw = 0;
+  let cameraPitch = 0.35;
+  let isDraggingCamera = false;
+  let lastTouchX = 0;
+  let lastTouchY = 0;
+
+  canvas.style.touchAction = "none";
+
+  canvas.addEventListener("pointerdown", (event) => {
+    isDraggingCamera = true;
+    lastTouchX = event.clientX;
+    lastTouchY = event.clientY;
+    canvas.setPointerCapture(event.pointerId);
+  });
+
+  canvas.addEventListener("pointermove", (event) => {
+    if (!isDraggingCamera) return;
+
+    const deltaX = event.clientX - lastTouchX;
+    const deltaY = event.clientY - lastTouchY;
+
+    lastTouchX = event.clientX;
+    lastTouchY = event.clientY;
+
+    cameraYaw -= deltaX * 0.008;
+    cameraPitch -= deltaY * 0.006;
+
+    cameraPitch = THREE.MathUtils.clamp(cameraPitch, -0.2, 1.1);
+  });
+
+  canvas.addEventListener("pointerup", (event) => {
+    isDraggingCamera = false;
+    canvas.releasePointerCapture(event.pointerId);
+  });
+
+  canvas.addEventListener("pointercancel", () => {
+    isDraggingCamera = false;
+  });
+
   const hemiLight = new THREE.HemisphereLight(0xbfe3ff, 0x4d3d2a, 1.1);
   scene.add(hemiLight);
 
-  // Luz principal
   const sunLight = new THREE.DirectionalLight(0xfff1d1, 1.2);
   sunLight.position.set(12, 20, 10);
   sunLight.castShadow = true;
@@ -44,7 +81,6 @@ if (!canvas) {
   sunLight.shadow.camera.bottom = -30;
   scene.add(sunLight);
 
-  // Terreno
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(200, 200),
     new THREE.MeshStandardMaterial({
@@ -56,7 +92,6 @@ if (!canvas) {
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // Caminho de pedra
   const path = new THREE.Mesh(
     new THREE.BoxGeometry(18, 0.2, 6),
     new THREE.MeshStandardMaterial({ color: 0x7a7d86 })
@@ -65,36 +100,94 @@ if (!canvas) {
   path.receiveShadow = true;
   scene.add(path);
 
-  // Player
   const player = new THREE.Group();
+
+  const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xf1d1b5 });
+  const headMaterial = new THREE.MeshStandardMaterial({ color: 0xf1d1b5 });
+  const outfitMaterial = new THREE.MeshStandardMaterial({ color: 0x2d8cff });
+  const hairMaterial = new THREE.MeshStandardMaterial({ color: 0x5b3a2a });
+
   const body = new THREE.Mesh(
     new THREE.CapsuleGeometry(0.8, 1.6, 4, 8),
-    new THREE.MeshStandardMaterial({ color: 0x2d8cff })
+    bodyMaterial
   );
   body.castShadow = true;
   body.position.y = 1.6;
   player.add(body);
 
+  const outfit = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2, 1.3, 0.5),
+    outfitMaterial
+  );
+  outfit.position.y = 1.8;
+  outfit.castShadow = true;
+  player.add(outfit);
+
   const head = new THREE.Mesh(
     new THREE.SphereGeometry(0.52, 18, 18),
-    new THREE.MeshStandardMaterial({ color: 0xf3d7b6 })
+    headMaterial
   );
   head.position.y = 3.0;
   head.castShadow = true;
   player.add(head);
 
-  const weapon = new THREE.Mesh(
-    new THREE.BoxGeometry(0.2, 1.4, 0.2),
-    new THREE.MeshStandardMaterial({ color: 0x9aa6b2 })
+  const hair = new THREE.Mesh(
+    new THREE.SphereGeometry(0.6, 18, 18),
+    hairMaterial
   );
-  weapon.position.set(0.9, 1.9, 0.2);
+  hair.position.y = 3.35;
+  hair.scale.set(1.04, 0.68, 1.02);
+  hair.castShadow = true;
+  player.add(hair);
+
+  const weapon = new THREE.Mesh(
+    new THREE.BoxGeometry(0.18, 1.4, 0.18),
+    new THREE.MeshStandardMaterial({ color: 0xd9dfe7 })
+  );
+  weapon.position.set(0.85, 1.9, 0.2);
   weapon.rotation.z = 0.6;
+  weapon.castShadow = true;
   player.add(weapon);
 
   player.position.set(0, 0, 0);
   scene.add(player);
 
-  // NPCs
+  const wings = new THREE.Group();
+  const wingMaterial = new THREE.MeshStandardMaterial({
+    color: 0xf0f4ff,
+    transparent: true,
+    opacity: 0.9
+  });
+
+  const leftWing = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.1, 0.12), wingMaterial);
+  leftWing.position.set(-1.1, 2.3, 0.2);
+  leftWing.rotation.z = 0.5;
+  wings.add(leftWing);
+
+  const rightWing = leftWing.clone();
+  rightWing.position.x = 1.1;
+  rightWing.rotation.z = -0.5;
+  wings.add(rightWing);
+
+  wings.visible = false;
+  player.add(wings);
+
+  const horns = new THREE.Group();
+  const hornMaterial = new THREE.MeshStandardMaterial({ color: 0x4f4f64 });
+
+  const horn1 = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.7, 6), hornMaterial);
+  horn1.position.set(-0.22, 3.5, 0);
+  horn1.rotation.z = -0.5;
+  horns.add(horn1);
+
+  const horn2 = horn1.clone();
+  horn2.position.x = 0.22;
+  horn2.rotation.z = 0.5;
+  horns.add(horn2);
+
+  horns.visible = false;
+  player.add(horns);
+
   const npcs = [];
   const npcMaterial = new THREE.MeshStandardMaterial({ color: 0xf4d5a6 });
 
@@ -123,7 +216,6 @@ if (!canvas) {
     npcs.push(npcGroup);
   }
 
-  // Monstros
   const monsters = [];
   const monsterMaterial = new THREE.MeshStandardMaterial({ color: 0x7f1d1d });
 
@@ -137,27 +229,25 @@ if (!canvas) {
     bodyM.position.y = 1.1;
     monster.add(bodyM);
 
-    const horn1 = new THREE.Mesh(
+    const horn1m = new THREE.Mesh(
       new THREE.ConeGeometry(0.12, 0.7, 6),
       new THREE.MeshStandardMaterial({ color: 0x1f2937 })
     );
-    horn1.position.set(-0.2, 2.4, 0);
-    horn1.rotation.z = -0.5;
-    monster.add(horn1);
+    horn1m.position.set(-0.2, 2.4, 0);
+    horn1m.rotation.z = -0.5;
+    monster.add(horn1m);
 
-    const horn2 = horn1.clone();
-    horn2.position.x = 0.2;
-    horn2.rotation.z = 0.5;
-    monster.add(horn2);
+    const horn2m = horn1m.clone();
+    horn2m.position.x = 0.2;
+    horn2m.rotation.z = 0.5;
+    monster.add(horn2m);
 
     monster.position.set(-24 + i * 7, 0, -18 + (i % 3) * 12);
     scene.add(monster);
     monsters.push(monster);
   }
 
-  // Castelo distante
   const castleGroup = new THREE.Group();
-
   const towerMaterial = new THREE.MeshStandardMaterial({ color: 0x9197a5 });
   const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x7b7f87 });
 
@@ -191,7 +281,6 @@ if (!canvas) {
 
   scene.add(castleGroup);
 
-  // Portal da dungeon
   const dungeonPortal = new THREE.Mesh(
     new THREE.TorusGeometry(1.5, 0.35, 16, 40),
     new THREE.MeshStandardMaterial({
@@ -204,7 +293,6 @@ if (!canvas) {
   dungeonPortal.position.set(18, 1.8, -6);
   scene.add(dungeonPortal);
 
-  // Arvores
   const trees = [];
   for (let i = 0; i < 30; i++) {
     const tree = new THREE.Group();
@@ -233,7 +321,6 @@ if (!canvas) {
     trees.push(tree);
   }
 
-  // Movimento do player
   const moveState = {
     forward: false,
     backward: false,
@@ -265,7 +352,6 @@ if (!canvas) {
   window.addEventListener("keydown", (e) => handleKey(e.code, true));
   window.addEventListener("keyup", (e) => handleKey(e.code, false));
 
-  // Touch mobile controls
   const mobileButtons = {
     up: document.getElementById("move-up"),
     down: document.getElementById("move-down"),
@@ -273,18 +359,10 @@ if (!canvas) {
     right: document.getElementById("move-right")
   };
 
-  const touchState = {
-    up: false,
-    down: false,
-    left: false,
-    right: false
-  };
-
   Object.entries(mobileButtons).forEach(([key, button]) => {
     if (!button) return;
 
     const setTouch = (pressed) => {
-      touchState[key] = pressed;
       if (key === "up") moveState.forward = pressed;
       if (key === "down") moveState.backward = pressed;
       if (key === "left") moveState.left = pressed;
@@ -303,7 +381,56 @@ if (!canvas) {
     button.addEventListener("mouseleave", () => setTouch(false));
   });
 
-  // Camera e animação
+  function updateWeaponVisual(weaponType) {
+    weapon.scale.set(1, 1, 1);
+    weapon.rotation.z = 0.6;
+    weapon.rotation.x = 0;
+
+    if (weaponType === "bow") {
+      weapon.geometry = new THREE.BoxGeometry(0.12, 1.5, 0.12);
+      weapon.position.set(0.9, 1.9, 0.25);
+    } else if (weaponType === "sword") {
+      weapon.geometry = new THREE.BoxGeometry(0.18, 2.2, 0.18);
+      weapon.position.set(0.8, 2.1, 0.2);
+      weapon.rotation.z = 1.1;
+    } else if (weaponType === "axe") {
+      weapon.geometry = new THREE.BoxGeometry(0.3, 1.8, 0.2);
+      weapon.position.set(0.8, 2.0, 0.2);
+      weapon.rotation.z = 0.85;
+    } else if (weaponType === "staff") {
+      weapon.geometry = new THREE.CylinderGeometry(0.12, 0.12, 2.2, 8);
+      weapon.position.set(0.75, 1.9, 0.2);
+      weapon.rotation.z = 0.1;
+    }
+  }
+
+  window.applyCharacterAppearance = function (data) {
+    if (!data) return;
+
+    const skin = new THREE.Color(data.skinColor || "#f1d1b5");
+    const hair = new THREE.Color(data.hairColor || "#5b3a2a");
+    const cloth = new THREE.Color(data.clothColor || "#2d8cff");
+
+    bodyMaterial.color.copy(skin);
+    headMaterial.color.copy(skin);
+    outfitMaterial.color.copy(cloth);
+    hairMaterial.color.copy(hair);
+
+    const selectedRace = (data.race || "elfo").toLowerCase();
+    wings.visible = selectedRace === "anjo";
+    horns.visible = selectedRace === "demonio";
+
+    if (selectedRace === "elfo") {
+      hair.scale.set(1.04, 0.68, 1.02);
+    } else if (selectedRace === "anjo") {
+      hair.scale.set(1.0, 0.8, 1.0);
+    } else if (selectedRace === "demonio") {
+      hair.scale.set(1.06, 0.72, 1.0);
+    }
+
+    updateWeaponVisual(data.weapon || "bow");
+  };
+
   function animate() {
     const delta = clock.getDelta();
     const speed = 7.5;
@@ -328,18 +455,20 @@ if (!canvas) {
       player.rotation.y = angle;
     }
 
-    // Limite do mapa
     player.position.x = THREE.MathUtils.clamp(player.position.x, -42, 42);
     player.position.z = THREE.MathUtils.clamp(player.position.z, -42, 42);
 
-    // Câmera segue o jogador
-    const offset = new THREE.Vector3(0, 7, 12);
-    const desired = player.position.clone().add(offset);
-    camera.position.lerp(desired, 1.2 * delta);
+    const cameraDistance = 12;
+    const offset = new THREE.Vector3(
+      Math.sin(cameraYaw) * cameraDistance,
+      5 + cameraPitch * 5,
+      Math.cos(cameraYaw) * cameraDistance
+    );
 
-    camera.lookAt(player.position.x, 2, player.position.z);
+    const desiredCameraPosition = player.position.clone().add(offset);
+    camera.position.lerp(desiredCameraPosition, 1.2 * delta);
+    camera.lookAt(player.position.x, player.position.y + 2, player.position.z);
 
-    // NPCs suaves
     npcs.forEach((npc, index) => {
       const t = performance.now() * 0.001 + index;
       npc.position.x += Math.sin(t * 0.7) * 0.004;
@@ -367,11 +496,12 @@ if (!canvas) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   });
 
-  // Esconde tela de carregamento se necessário
-  const gameArea = document.getElementById("game-screen");
-  if (gameArea) {
-    gameArea.addEventListener("click", () => {
-      canvas.focus?.();
-    });
-  }
-    }
+  window.applyCharacterAppearance({
+    name: "Aventureiro",
+    race: "elfo",
+    skinColor: "#f1d1b5",
+    hairColor: "#5b3a2a",
+    clothColor: "#2d8cff",
+    weapon: "bow"
+  });
+}

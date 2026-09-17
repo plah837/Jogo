@@ -95,7 +95,11 @@
       intelligence: 12
     },
     inventory: ["bow", "sword"],
-    equippedWeapon: "bow"
+    equippedWeapon: "bow",
+    skinColor: "#f1d1b5",
+    hairColor: "#5b3a2a",
+    clothColor: "#2d8cff",
+    weapon: "bow"
   };
 
   let player = loadPlayer();
@@ -103,13 +107,9 @@
   function loadPlayer() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-
-      if (!saved) {
-        return structuredClone(defaultPlayer);
-      }
+      if (!saved) return structuredClone(defaultPlayer);
 
       const parsed = JSON.parse(saved);
-
       return {
         ...structuredClone(defaultPlayer),
         ...parsed,
@@ -141,10 +141,7 @@
 
   function updateText(id, value) {
     const element = document.getElementById(id);
-
-    if (element) {
-      element.textContent = value;
-    }
+    if (element) element.textContent = value;
   }
 
   function updatePlayerInterface() {
@@ -167,35 +164,24 @@
     const manaBar = document.getElementById("mana-progress");
     const experienceBar = document.getElementById("experience-progress");
 
-    if (healthBar) {
-      healthBar.style.width = "100%";
-    }
-
-    if (manaBar) {
-      const manaPercent = Math.min(100, player.stats.mana);
-      manaBar.style.width = `${manaPercent}%`;
-    }
-
+    if (healthBar) healthBar.style.width = "100%";
+    if (manaBar) manaBar.style.width = `${Math.min(100, player.stats.mana)}%`;
     if (experienceBar) {
-      const experienceRequired = player.level * 100;
-      const experiencePercent =
-        (player.experience / experienceRequired) * 100;
-
-      experienceBar.style.width =
-        `${Math.min(100, experiencePercent)}%`;
+      const requiredExperience = player.level * 100;
+      const percent = Math.min(100, (player.experience / requiredExperience) * 100);
+      experienceBar.style.width = `${percent}%`;
     }
 
-    updateText("equipped-weapon-name", weapon.name);
-    updateText("equipped-weapon-damage", weapon.damage);
+    if (weapon) {
+      updateText("equipped-weapon-name", weapon.name);
+      updateText("equipped-weapon-damage", weapon.damage);
+    }
 
     savePlayer();
   }
 
   function applyRace(raceId) {
-    if (!raceData[raceId]) {
-      raceId = "elfo";
-    }
-
+    if (!raceData[raceId]) raceId = "elfo";
     const race = raceData[raceId];
 
     player.raceId = raceId;
@@ -213,14 +199,27 @@
     }
 
     player.equippedWeapon = race.starterWeapon;
+    player.weapon = race.starterWeapon;
+    player.skinColor = player.skinColor || "#f1d1b5";
+    player.hairColor = player.hairColor || "#5b3a2a";
+    player.clothColor = player.clothColor || "#2d8cff";
 
     updatePlayerInterface();
     renderInventory();
+    if (window.applyCharacterAppearance) {
+      window.applyCharacterAppearance({
+        name: player.name,
+        race: player.raceId,
+        skinColor: player.skinColor,
+        hairColor: player.hairColor,
+        clothColor: player.clothColor,
+        weapon: player.weapon
+      });
+    }
   }
 
   function resetStats() {
     const race = getCurrentRace();
-
     player.stats = {
       health: race.health,
       mana: race.mana,
@@ -229,127 +228,71 @@
       agility: race.agility,
       intelligence: race.intelligence
     };
-
     player.availablePoints = 0;
-
-    savePlayer();
     updatePlayerInterface();
-
     alert("Estatísticas resetadas gratuitamente!");
-  }
-
-  function addStat(statName) {
-    if (player.availablePoints <= 0) {
-      alert("Você não possui pontos disponíveis.");
-      return;
-    }
-
-    if (!Object.prototype.hasOwnProperty.call(player.stats, statName)) {
-      return;
-    }
-
-    player.stats[statName] += 1;
-    player.availablePoints -= 1;
-
-    savePlayer();
-    updatePlayerInterface();
-    renderStats();
-  }
-
-  function renderStats() {
-    const modalContent = document.querySelector("#stats-modal .modal-content");
-
-    if (!modalContent) {
-      return;
-    }
-
-    let statControls = document.getElementById("stat-controls");
-
-    if (!statControls) {
-      statControls = document.createElement("div");
-      statControls.id = "stat-controls";
-      statControls.className = "stat-list";
-      modalContent.appendChild(statControls);
-    }
-
-    const stats = [
-      ["health", "Vida"],
-      ["mana", "Mana"],
-      ["strength", "Força"],
-      ["defense", "Defesa"],
-      ["agility", "Agilidade"],
-      ["intelligence", "Inteligência"]
-    ];
-
-    statControls.innerHTML = stats
-      .map(([id, name]) => {
-        return `
-          <div class="stat-control-row">
-            <span>${name}</span>
-            <strong>${player.stats[id]}</strong>
-            <button class="add-stat-button" data-stat="${id}">
-              +
-            </button>
-          </div>
-        `;
-      })
-      .join("");
-
-    statControls
-      .querySelectorAll(".add-stat-button")
-      .forEach(button => {
-        button.addEventListener("click", () => {
-          addStat(button.dataset.stat);
-        });
-      });
   }
 
   function equipWeapon(weaponId) {
     const weapon = weapons[weaponId];
-
-    if (!weapon) {
-      return;
-    }
-
+    if (!weapon) return;
     if (!player.inventory.includes(weaponId)) {
       alert("Essa arma não está no seu inventário.");
       return;
     }
-
     if (player.level < weapon.requiredLevel) {
       alert(`Você precisa do nível ${weapon.requiredLevel} para usar esta arma.`);
       return;
     }
 
     player.equippedWeapon = weaponId;
-
+    player.weapon = weaponId;
     savePlayer();
     updatePlayerInterface();
     renderInventory();
+    if (window.applyCharacterAppearance) {
+      window.applyCharacterAppearance({
+        name: player.name,
+        race: player.raceId,
+        skinColor: player.skinColor,
+        hairColor: player.hairColor,
+        clothColor: player.clothColor,
+        weapon: player.weapon
+      });
+    }
+  }
+
+  function updateAppearanceFromInputs() {
+    const skin = document.getElementById("skin-color");
+    const hair = document.getElementById("hair-color");
+    const cloth = document.getElementById("cloth-color");
+    const weapon = document.getElementById("weapon-select");
+
+    if (skin) player.skinColor = skin.value;
+    if (hair) player.hairColor = hair.value;
+    if (cloth) player.clothColor = cloth.value;
+    if (weapon) player.weapon = weapon.value;
+
+    if (window.applyCharacterAppearance) {
+      window.applyCharacterAppearance({
+        name: player.name,
+        race: player.raceId,
+        skinColor: player.skinColor,
+        hairColor: player.hairColor,
+        clothColor: player.clothColor,
+        weapon: player.weapon
+      });
+    }
   }
 
   function renderInventory() {
-    const modalContent = document.querySelector(
-      "#inventory-modal .modal-content"
-    );
-
-    if (!modalContent) {
-      return;
-    }
-
-    let inventoryContainer = document.getElementById("real-inventory");
-
-    if (!inventoryContainer) {
-      inventoryContainer = document.createElement("div");
-      inventoryContainer.id = "real-inventory";
-      modalContent.appendChild(inventoryContainer);
-    }
+    const modalContent = document.querySelector("#inventory-modal .modal-content");
+    if (!modalContent) return;
 
     const equipped = getCurrentWeapon();
-
-    inventoryContainer.innerHTML = `
-      <h3>Arma equipada</h3>
-
+    modalContent.innerHTML = `
+      <button class="close-button" data-close="inventory-modal">×</button>
+      <h2>Inventário</h2>
       <div class="equipped-weapon">
         <span class="big-item-icon">${equipped.icon}</span>
         <div>
@@ -358,225 +301,143 @@
           <p>Tipo: ${equipped.type}</p>
         </div>
       </div>
-
-      <h3>Suas armas</h3>
-
       <div class="real-inventory-grid">
-        ${player.inventory
-          .map(weaponId => {
-            const weapon = weapons[weaponId];
-
-            if (!weapon) {
-              return "";
-            }
-
-            const isEquipped = player.equippedWeapon === weapon.id;
-
-            return `
-              <div class="real-item ${isEquipped ? "is-equipped" : ""}">
-                <span class="big-item-icon">${weapon.icon}</span>
-                <strong>${weapon.name}</strong>
-                <small>${weapon.type}</small>
-                <small>Dano: ${weapon.damage}</small>
-
-                <button
-                  class="equip-button"
-                  data-weapon="${weapon.id}"
-                  ${isEquipped ? "disabled" : ""}
-                >
-                  ${isEquipped ? "Equipado" : "Equipar"}
-                </button>
-              </div>
-            `;
-          })
-          .join("")}
+        ${player.inventory.map((weaponId) => {
+          const weaponItem = weapons[weaponId];
+          if (!weaponItem) return "";
+          const isEquipped = player.equippedWeapon === weaponId;
+          return `
+            <div class="real-item ${isEquipped ? "is-equipped" : ""}">
+              <span class="big-item-icon">${weaponItem.icon}</span>
+              <strong>${weaponItem.name}</strong>
+              <small>${weaponItem.type}</small>
+              <small>Dano: ${weaponItem.damage}</small>
+              <button class="equip-button" data-weapon="${weaponItem.id}" ${isEquipped ? "disabled" : ""}>
+                ${isEquipped ? "Equipado" : "Equipar"}
+              </button>
+            </div>
+          `;
+        }).join("")}
       </div>
     `;
 
-    inventoryContainer
-      .querySelectorAll(".equip-button")
-      .forEach(button => {
-        button.addEventListener("click", () => {
-          equipWeapon(button.dataset.weapon);
-        });
-      });
+    modalContent.querySelectorAll(".equip-button").forEach((button) => {
+      button.addEventListener("click", () => equipWeapon(button.dataset.weapon));
+    });
+
+    modalContent.querySelector(".close-button")?.addEventListener("click", () => {
+      document.getElementById("inventory-modal").classList.add("hidden");
+    });
   }
 
-  function createDungeonSystem() {
-    const modalContent = document.querySelector(
-      "#dungeon-modal .modal-content"
-    );
-
-    if (!modalContent) {
-      return;
-    }
-
-    let dungeonContainer = document.getElementById("real-dungeons");
-
-    if (!dungeonContainer) {
-      dungeonContainer = document.createElement("div");
-      dungeonContainer.id = "real-dungeons";
-      modalContent.appendChild(dungeonContainer);
-    }
+  function renderDungeonSystem() {
+    const modalContent = document.querySelector("#dungeon-modal .modal-content");
+    if (!modalContent) return;
 
     const dungeons = [
-      {
-        id: "goblins",
-        name: "Caverna dos Goblins",
-        level: 20,
-        monsters: "Goblins, arqueiros e Rei Goblin",
-        reward: "Espada rara"
-      },
-      {
-        id: "angel-ruins",
-        name: "Ruínas Celestiais",
-        level: 500,
-        monsters: "Gárgulas e espíritos",
-        reward: "Armadura sagrada"
-      },
-      {
-        id: "lord-demon",
-        name: "Dungeon do Lord Demon",
-        level: 1200,
-        monsters: "Demônios, generais e Lord Demon",
-        reward: "Arma lendária"
-      }
+      { name: "Caverna dos Goblins", level: 20, monsters: "Goblins", reward: "Espada rara" },
+      { name: "Ruínas Celestiais", level: 500, monsters: "Gárgulas", reward: "Armadura sagrada" },
+      { name: "Dungeon do Lord Demon", level: 1200, monsters: "Lord Demon", reward: "Arma lendária" }
     ];
 
-    dungeonContainer.innerHTML = dungeons
-      .map(dungeon => {
+    modalContent.innerHTML = `
+      <button class="close-button" data-close="dungeon-modal">×</button>
+      <h2>Dungeons</h2>
+      ${dungeons.map((dungeon) => {
         const locked = player.level < dungeon.level;
-
         return `
           <div class="real-dungeon-card ${locked ? "locked" : ""}">
             <h3>${dungeon.name}</h3>
             <p>Nível recomendado: ${dungeon.level}</p>
             <p>Monstros: ${dungeon.monsters}</p>
             <p>Recompensa: ${dungeon.reward}</p>
-
-            <button
-              class="enter-dungeon-button"
-              data-dungeon="${dungeon.id}"
-              ${locked ? "disabled" : ""}
-            >
+            <button class="enter-dungeon-button" ${locked ? "disabled" : ""}>
               ${locked ? "Nível insuficiente" : "Entrar na dungeon"}
             </button>
           </div>
         `;
-      })
-      .join("");
+      }).join("")}
+    `;
 
-    dungeonContainer
-      .querySelectorAll(".enter-dungeon-button")
-      .forEach(button => {
-        button.addEventListener("click", () => {
-          alert(
-            "Dungeon preparada! O combate será adicionado na próxima etapa."
-          );
-        });
-      });
+    modalContent.querySelector(".close-button")?.addEventListener("click", () => {
+      document.getElementById("dungeon-modal").classList.add("hidden");
+    });
   }
 
   function connectCharacterCreation() {
-    const createButton = document.getElementById(
-      "create-character-button"
-    );
-
-    if (!createButton) {
-      return;
-    }
+    const createButton = document.getElementById("create-character-button");
+    if (!createButton) return;
 
     createButton.addEventListener("click", () => {
       const nameInput = document.getElementById("player-name");
       const selectedCard = document.querySelector(".race-card.selected");
+      const selectedRace = selectedCard?.dataset.race || "elfo";
 
-      const selectedRace =
-        selectedCard?.dataset.race || "elfo";
-
-      player.name =
-        nameInput?.value.trim() || "Aventureiro";
+      player.name = nameInput?.value.trim() || "Aventureiro";
+      player.raceId = selectedRace;
+      player.skinColor = document.getElementById("skin-color")?.value || player.skinColor;
+      player.hairColor = document.getElementById("hair-color")?.value || player.hairColor;
+      player.clothColor = document.getElementById("cloth-color")?.value || player.clothColor;
+      player.weapon = document.getElementById("weapon-select")?.value || player.weapon;
 
       applyRace(selectedRace);
-      renderStats();
+      updateAppearanceFromInputs();
       renderInventory();
-      createDungeonSystem();
+      renderDungeonSystem();
+      savePlayer();
     });
   }
 
   function connectButtons() {
-    const resetButton = document.getElementById("reset-stats-button");
+    document.getElementById("reset-stats-button")?.addEventListener("click", resetStats);
+    document.getElementById("stats-button")?.addEventListener("click", () => {
+      document.querySelector("#stats-modal .modal-content")?.classList.remove("hidden");
+    });
+  }
 
-    if (resetButton) {
-      resetButton.addEventListener("click", resetStats);
-    }
+  function prepareDefaultAppearance() {
+    const skin = document.getElementById("skin-color");
+    const hair = document.getElementById("hair-color");
+    const cloth = document.getElementById("cloth-color");
+    const weapon = document.getElementById("weapon-select");
 
-    const statsButton = document.getElementById("stats-button");
-
-    if (statsButton) {
-      statsButton.addEventListener("click", () => {
-        renderStats();
-      });
-    }
-
-    const inventoryButton = document.getElementById("inventory-button");
-
-    if (inventoryButton) {
-      inventoryButton.addEventListener("click", () => {
-        renderInventory();
-      });
-    }
-
-    const dungeonButton = document.getElementById("dungeon-button");
-
-    if (dungeonButton) {
-      dungeonButton.addEventListener("click", () => {
-        createDungeonSystem();
-      });
-    }
+    if (skin) skin.value = player.skinColor || "#f1d1b5";
+    if (hair) hair.value = player.hairColor || "#5b3a2a";
+    if (cloth) cloth.value = player.clothColor || "#2d8cff";
+    if (weapon) weapon.value = player.weapon || "bow";
   }
 
   window.addEventListener("load", () => {
+    prepareDefaultAppearance();
     connectCharacterCreation();
     connectButtons();
-    renderStats();
     renderInventory();
-    createDungeonSystem();
+    renderDungeonSystem();
     updatePlayerInterface();
+    savePlayer();
   });
 
   window.gamePlayer = {
     getData: () => player,
     addExperience(amount) {
       player.experience += amount;
-
       const requiredExperience = player.level * 100;
-
       while (player.experience >= requiredExperience) {
-        player.experience -= player.level * 100;
+        player.experience -= requiredExperience;
         player.level += 1;
         player.availablePoints += 5;
       }
-
       savePlayer();
       updatePlayerInterface();
-      renderStats();
-      createDungeonSystem();
     },
-
     addWeapon(weaponId) {
-      if (!weapons[weaponId]) {
-        return false;
-      }
-
+      if (!weapons[weaponId]) return false;
       if (!player.inventory.includes(weaponId)) {
         player.inventory.push(weaponId);
         savePlayer();
         renderInventory();
       }
-
       return true;
-    },
-
-    resetStats
+    }
   };
 })();

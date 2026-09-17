@@ -11,6 +11,10 @@ const backToMenuButton = document.getElementById("back-to-menu-button");
 
 const raceCards = document.querySelectorAll(".race-card");
 const playerNameInput = document.getElementById("player-name");
+const skinColorInput = document.getElementById("skin-color");
+const hairColorInput = document.getElementById("hair-color");
+const clothColorInput = document.getElementById("cloth-color");
+const weaponSelect = document.getElementById("weapon-select");
 
 const statsButton = document.getElementById("stats-button");
 const inventoryButton = document.getElementById("inventory-button");
@@ -48,7 +52,11 @@ let playerData = {
   defense: 10,
   agility: 10,
   intelligence: 10,
-  points: 0
+  points: 0,
+  skinColor: "#f1d1b5",
+  hairColor: "#5b3a2a",
+  clothColor: "#2d8cff",
+  weapon: "bow"
 };
 
 function setLoading() {
@@ -160,6 +168,21 @@ function resetStats() {
   updatePlayerInterface();
 }
 
+function syncAppearanceToGame() {
+  const appearance = {
+    name: playerData.name,
+    race: selectedRace,
+    skinColor: playerData.skinColor,
+    hairColor: playerData.hairColor,
+    clothColor: playerData.clothColor,
+    weapon: playerData.weapon
+  };
+
+  if (window.applyCharacterAppearance) {
+    window.applyCharacterAppearance(appearance);
+  }
+}
+
 startGameButton.addEventListener("click", () => {
   mainMenu.classList.add("hidden");
   characterScreen.classList.remove("hidden");
@@ -169,6 +192,7 @@ continueButton.addEventListener("click", () => {
   mainMenu.classList.add("hidden");
   gameScreen.classList.remove("hidden");
   updatePlayerInterface();
+  syncAppearanceToGame();
 });
 
 backToMenuButton.addEventListener("click", () => {
@@ -183,6 +207,22 @@ raceCards.forEach(card => {
   });
 });
 
+skinColorInput.addEventListener("input", () => {
+  playerData.skinColor = skinColorInput.value;
+});
+
+hairColorInput.addEventListener("input", () => {
+  playerData.hairColor = hairColorInput.value;
+});
+
+clothColorInput.addEventListener("input", () => {
+  playerData.clothColor = clothColorInput.value;
+});
+
+weaponSelect.addEventListener("change", () => {
+  playerData.weapon = weaponSelect.value;
+});
+
 createCharacterButton.addEventListener("click", () => {
   const typedName = playerNameInput.value.trim();
   playerData.name = typedName || "Aventureiro";
@@ -195,10 +235,16 @@ createCharacterButton.addEventListener("click", () => {
     playerData.race = "Demônio";
   }
 
+  playerData.skinColor = skinColorInput.value;
+  playerData.hairColor = hairColorInput.value;
+  playerData.clothColor = clothColorInput.value;
+  playerData.weapon = weaponSelect.value;
+
   applyRaceStats();
   characterScreen.classList.add("hidden");
   gameScreen.classList.remove("hidden");
   updatePlayerInterface();
+  syncAppearanceToGame();
 });
 
 statsButton.addEventListener("click", () => {
