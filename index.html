@@ -60,11 +60,7 @@
         <div class="status-row"><span>Vida</span><div class="status-bar health"><div id="health-progress"></div></div><b id="combat-health-text">100/100</b></div>
         <div class="status-row"><span>Mana</span><div class="status-bar mana"><div id="mana-progress"></div></div></div>
       </div>
-      <div id="combat-panel" class="combat-panel hidden">
-        <strong id="enemy-name">Monstro</strong>
-        <div class="enemy-health"><div id="enemy-health-progress"></div></div>
-        <small id="enemy-health-text">100/100</small>
-      </div>
+      <div id="combat-panel" class="combat-panel hidden"><strong id="enemy-name">Monstro</strong><div class="enemy-health"><div id="enemy-health-progress"></div></div><small id="enemy-health-text">100/100</small></div>
       <div class="game-buttons">
         <button id="attack-button" class="attack-button">⚔️ Atacar</button>
         <button id="stats-button">Estatísticas</button><button id="inventory-button">Inventário</button><button id="dungeon-button">Dungeons</button>
@@ -78,6 +74,11 @@
   <div id="dungeon-modal" class="modal hidden"><div class="modal-content"><button class="close-button" data-close="dungeon-modal">×</button><h2>Dungeons</h2></div></div>
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script src="script.js"></script><script src="game.js"></script><script src="rpg-systems.js"></script><script src="combat.js"></script>
+  <script src="script.js"></script>
+  <script src="game.js"></script>
+  <script src="rpg-systems.js"></script>
+  <script src="combat.js"></script>
+  <script src="camera-upgrade.js"></script>
+  <script src="version.js"></script>
 </body>
 </html>
