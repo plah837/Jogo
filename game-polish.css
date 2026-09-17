@@ -1,0 +1,29 @@
+/* Interface interna compacta e seleção de personagem */
+.character-panel { max-height:90vh; }
+.step-label { color:#62d9ff; font-size:.68rem; letter-spacing:.18em; font-weight:800; margin-bottom:10px; }
+.panel-intro { color:#aab7d3; line-height:1.5; margin:-8px 0 18px; }
+.race-toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; color:#aab7d3; font-size:.78rem; margin-bottom:10px; }
+#race-search { width:min(240px,48%); height:40px; border:1px solid rgba(153,199,255,.3); border-radius:12px; padding:0 12px; color:#fff; background:rgba(255,255,255,.06); outline:0; }
+.race-options { max-height:265px; overflow:auto; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; padding:4px; scrollbar-color:#62d9ff rgba(255,255,255,.06); }
+.race-card { min-height:112px; padding:12px; border-radius:15px; }
+.race-card .race-icon { font-size:1.7rem; }
+.selected-race-info { min-height:36px; margin-top:10px; padding:9px 12px; border:1px solid rgba(98,217,255,.2); border-radius:12px; color:#b9c8e8; background:rgba(98,217,255,.05); font-size:.78rem; }
+.skin-step { margin-top:18px; }
+.skin-preview { display:flex; align-items:center; gap:15px; margin:10px 0 14px; padding:12px 15px; border:1px solid rgba(153,199,255,.2); border-radius:16px; background:linear-gradient(120deg,rgba(98,217,255,.08),rgba(158,123,255,.08)); }
+.skin-preview small { display:block; color:#aab7d3; margin-top:4px; font-size:.72rem; }
+#skin-preview-avatar { position:relative; width:58px; height:72px; flex:none; border-radius:30px 30px 16px 16px; background:#2d8cff; box-shadow:0 0 18px rgba(98,217,255,.22); overflow:hidden; }
+#skin-preview-face { position:absolute; width:34px; height:34px; left:12px; top:8px; border-radius:50%; background:#f1d1b5; }
+#skin-preview-hair { position:absolute; z-index:2; width:38px; height:18px; left:10px; top:5px; border-radius:20px 20px 5px 5px; background:#5b3a2a; }
+#skin-preview-cloth { position:absolute; bottom:0; left:0; width:100%; height:30px; background:#2d8cff; }
+.confirm-content { text-align:center; }
+.confirm-content p { color:#aab7d3; line-height:1.6; margin-bottom:18px; }
+.confirm-actions { display:flex; gap:10px; }
+.confirm-actions button { flex:1; }
+/* Corrige o HUD no celular: sem painéis gigantes cobrindo o mundo. */
+#game-interface { pointer-events:none; }
+.status-bars { left:12px; bottom:126px; right:auto; width:min(340px,58vw); }
+.status-row { width:100%; min-height:42px; padding:7px 10px; }
+.game-buttons { right:12px; bottom:16px; max-width:52vw; }
+.game-buttons button { min-height:45px; padding:0 12px; font-size:.78rem; }
+#mobile-controls { bottom:16px; left:12px; }
+@media (max-width:700px) { .race-toolbar { align-items:stretch; flex-direction:column; } #race-search { width:100%; } .race-options { grid-template-columns:repeat(2,minmax(0,1fr)); max-height:220px; } .race-card { min-height:92px; padding:10px; } .race-card .race-icon { font-size:1.45rem; } .status-bars { bottom:158px; width:min(94vw,390px); } .status-row { min-height:38px; } .game-buttons { left:112px; right:10px; bottom:12px; max-width:none; justify-content:flex-end; } .game-buttons button { flex:1 1 30%; min-width:0; font-size:.68rem; padding:0 5px; } .game-buttons .attack-button { flex-basis:100%; } .confirm-actions { flex-direction:column; } }

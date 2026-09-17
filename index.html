@@ -3,82 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#090b13">
+  <meta name="theme-color" content="#070b18">
   <title>Kingdoms of Ash and Light</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="game-polish.css">
 </head>
 <body>
-  <div id="loading-screen">
-    <div class="loading-content">
-      <h1>Kingdoms of Ash and Light</h1>
-      <p>Carregando o reino...</p>
-      <div class="loading-bar"><div id="loading-progress"></div></div>
-    </div>
-  </div>
+  <div id="loading-screen"><div class="loading-content"><div class="loading-mark">✦</div><h1>Kingdoms of Ash and Light</h1><p>O reino desperta...</p><div class="loading-bar"><div id="loading-progress"></div></div></div></div>
 
-  <main id="main-menu" class="hidden">
-    <section class="menu-content">
-      <p class="game-subtitle">RPG 3D • MUNDO ABERTO • GRATUITO</p>
-      <h1>Kingdoms of<br>Ash and Light</h1>
-      <p class="description">Explore reinos, enfrente monstros, conquiste dungeons e descubra o segredo do Lord Demon.</p>
-      <button id="start-game-button" class="main-button">Iniciar jogo</button>
-      <button id="continue-button" class="secondary-button">Continuar</button>
-      <p class="no-ads">Gratuito • Sem anúncios</p>
-    </section>
-  </main>
+  <main id="main-menu" class="hidden"><div class="menu-stars"></div><section class="menu-content"><p class="game-subtitle">✦ RPG 3D • MUNDO ABERTO • GRATUITO ✦</p><p class="menu-kicker">A lenda começa com você</p><h1>Kingdoms of<br><em>Ash and Light</em></h1><div class="title-divider"><span>◆</span></div><p class="description">Escolha seu destino, atravesse reinos esquecidos e enfrente criaturas lendárias em uma aventura anime de fantasia.</p><div class="menu-features"><span>⚔️ Combate</span><span>🌌 Mundo aberto</span><span>🐉 50+ raças</span></div><button id="start-game-button" class="main-button">✦ Criar personagem</button><button id="continue-button" class="secondary-button">Continuar aventura</button><p class="no-ads">Sem anúncios • Seu reino • Sua lenda</p></section></main>
 
-  <section id="character-screen" class="screen hidden">
-    <div class="panel">
-      <h2>Crie seu personagem</h2>
-      <label for="player-name">Nome do personagem</label>
-      <input id="player-name" type="text" maxlength="16" placeholder="Digite seu nome">
-      <h3>Escolha sua raça</h3>
-      <div class="race-options">
-        <button class="race-card selected" data-race="elfo"><span class="race-icon">🏹</span><strong>Elfo</strong><small>Arco e agilidade.</small></button>
-        <button class="race-card" data-race="anjo"><span class="race-icon">🪽</span><strong>Anjo</strong><small>Defesa e cura.</small></button>
-        <button class="race-card" data-race="demonio"><span class="race-icon">🔥</span><strong>Demônio</strong><small>Força e fogo.</small></button>
-      </div>
-      <div class="customizer-grid">
-        <div class="customizer-field"><label for="skin-color">Cor da pele</label><input id="skin-color" type="color" value="#f1d1b5"></div>
-        <div class="customizer-field"><label for="hair-color">Cor do cabelo</label><input id="hair-color" type="color" value="#5b3a2a"></div>
-        <div class="customizer-field"><label for="cloth-color">Cor da roupa</label><input id="cloth-color" type="color" value="#2d8cff"></div>
-        <div class="customizer-field"><label for="weapon-select">Arma inicial</label><select id="weapon-select"><option value="bow">Arco</option><option value="sword">Espada</option><option value="axe">Machado</option><option value="staff">Cajado</option></select></div>
-      </div>
-      <button id="create-character-button" class="main-button">Criar personagem</button>
-      <button id="back-to-menu-button" class="secondary-button">Voltar</button>
-    </div>
-  </section>
+  <section id="character-screen" class="screen hidden"><div class="panel character-panel"><div class="step-label">PARTE 1 / 2 · IDENTIDADE</div><h2>Desperte seu herói</h2><p class="panel-intro">Escolha uma linhagem e crie uma aparência única para iniciar sua jornada.</p><label for="player-name">Nome do personagem</label><input id="player-name" type="text" maxlength="16" placeholder="Digite seu nome"><h3>Escolha sua raça</h3><div class="race-toolbar"><span>50+ linhagens originais</span><input id="race-search" type="search" placeholder="Buscar raça..."></div><div class="race-options"></div><div class="selected-race-info" id="selected-race-info">Escolha uma raça para ver seus atributos.</div><div class="step-label skin-step">PARTE 2 / 2 · APARÊNCIA</div><h3>Monte sua skin</h3><div class="skin-preview"><div id="skin-preview-avatar"><span id="skin-preview-hair"></span><span id="skin-preview-face"></span><span id="skin-preview-cloth"></span></div><div><strong id="skin-preview-name">Prévia do herói</strong><small>As cores aparecem no personagem ao entrar no reino.</small></div></div><div class="customizer-grid"><div class="customizer-field"><label for="skin-color">Cor da pele</label><input id="skin-color" type="color" value="#f1d1b5"></div><div class="customizer-field"><label for="hair-color">Cor do cabelo</label><input id="hair-color" type="color" value="#5b3a2a"></div><div class="customizer-field"><label for="cloth-color">Cor da roupa</label><input id="cloth-color" type="color" value="#2d8cff"></div><div class="customizer-field"><label for="weapon-select">Arma inicial</label><select id="weapon-select"><option value="bow">Arco</option><option value="sword">Espada</option><option value="axe">Machado</option><option value="staff">Cajado</option></select></div></div><button id="create-character-button" class="main-button">Concluir e entrar no reino</button><button id="back-to-menu-button" class="secondary-button">Voltar</button></div></section>
 
-  <section id="game-screen" class="hidden">
-    <canvas id="game-canvas"></canvas>
-    <div id="game-interface">
-      <div class="top-bar">
-        <div class="player-info"><strong id="display-player-name">Aventureiro</strong><span id="display-player-race">Elfo</span></div>
-        <div class="level-info"><span>Nível <strong id="display-level">1</strong></span><div class="experience-bar"><div id="experience-progress"></div></div></div>
-      </div>
-      <div class="status-bars">
-        <div class="status-row"><span>Vida</span><div class="status-bar health"><div id="health-progress"></div></div><b id="combat-health-text">100/100</b></div>
-        <div class="status-row"><span>Mana</span><div class="status-bar mana"><div id="mana-progress"></div></div></div>
-      </div>
-      <div id="combat-panel" class="combat-panel hidden"><strong id="enemy-name">Monstro</strong><div class="enemy-health"><div id="enemy-health-progress"></div></div><small id="enemy-health-text">100/100</small></div>
-      <div class="game-buttons">
-        <button id="attack-button" class="attack-button">⚔️ Atacar</button>
-        <button id="stats-button">Estatísticas</button><button id="inventory-button">Inventário</button><button id="dungeon-button">Dungeons</button>
-      </div>
-      <div id="mobile-controls"><button id="move-up">▲</button><div><button id="move-left">◀</button><button id="move-down">▼</button><button id="move-right">▶</button></div></div>
-    </div>
-  </section>
+  <div id="confirm-modal" class="modal hidden"><div class="modal-content confirm-content"><h2>Confirmar personagem?</h2><p>Tem certeza de que deseja concluir? Sua raça, skin e arma serão usadas para iniciar esta aventura.</p><div class="confirm-actions"><button id="cancel-create" class="secondary-button">Ainda não</button><button id="confirm-create" class="main-button">Sim, começar</button></div></div></div>
+
+  <section id="game-screen" class="hidden"><canvas id="game-canvas"></canvas><div id="game-interface"><div class="top-bar"><div class="player-info"><strong id="display-player-name">Aventureiro</strong><span id="display-player-race">Elfo</span></div><div class="level-info"><span>Nível <strong id="display-level">1</strong></span><div class="experience-bar"><div id="experience-progress"></div></div></div></div><div class="status-bars"><div class="status-row"><span>Vida</span><div class="status-bar health"><div id="health-progress"></div></div><b id="combat-health-text">100/100</b></div><div class="status-row"><span>Mana</span><div class="status-bar mana"><div id="mana-progress"></div></div></div></div><div id="combat-panel" class="combat-panel hidden"><strong id="enemy-name">Monstro</strong><div class="enemy-health"><div id="enemy-health-progress"></div></div><small id="enemy-health-text">100/100</small></div><div class="game-buttons"><button id="attack-button" class="attack-button">⚔️ Atacar</button><button id="stats-button">Estatísticas</button><button id="inventory-button">Inventário</button><button id="dungeon-button">Dungeons</button></div><div id="mobile-controls"><button id="move-up">▲</button><div><button id="move-left">◀</button><button id="move-down">▼</button><button id="move-right">▶</button></div></div></div></section>
 
   <div id="stats-modal" class="modal hidden"><div class="modal-content"><button class="close-button" data-close="stats-modal">×</button><h2>Estatísticas</h2><div class="stat-list"><p>Vida: <strong id="stat-health">100</strong></p><p>Mana: <strong id="stat-mana">50</strong></p><p>Força: <strong id="stat-strength">10</strong></p><p>Defesa: <strong id="stat-defense">10</strong></p><p>Agilidade: <strong id="stat-agility">10</strong></p><p>Inteligência: <strong id="stat-intelligence">10</strong></p></div><p>Pontos disponíveis: <strong id="stat-points">0</strong></p><button id="reset-stats-button" class="main-button">Resetar estatísticas — Grátis</button></div></div>
-  <div id="inventory-modal" class="modal hidden"><div class="modal-content"><button class="close-button" data-close="inventory-modal">×</button><h2>Inventário</h2></div></div>
-  <div id="dungeon-modal" class="modal hidden"><div class="modal-content"><button class="close-button" data-close="dungeon-modal">×</button><h2>Dungeons</h2></div></div>
+  <div id="inventory-modal" class="modal hidden"><div class="modal-content"><button class="close-button" data-close="inventory-modal">×</button><h2>Inventário</h2></div></div><div id="dungeon-modal" class="modal hidden"><div class="modal-content"><button class="close-button" data-close="dungeon-modal">×</button><h2>Dungeons</h2></div></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script src="script.js"></script>
-  <script src="game.js"></script>
-  <script src="rpg-systems.js"></script>
-  <script src="combat.js"></script>
-  <script src="camera-upgrade.js"></script>
-  <script src="version.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script><script src="race-catalog.js"></script><script src="script.js"></script><script src="game.js"></script><script src="rpg-systems.js"></script><script src="race-engine.js"></script><script src="combat.js"></script><script src="camera-upgrade.js"></script><script src="version.js"></script><script src="character-flow.js"></script>
 </body>
 </html>
