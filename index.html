@@ -1,1 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
 
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <meta name="theme-color" content="#090b13">
+
+  <title>Kingdoms of Ash and Light</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Tela de carregamento -->
+  <div id="loading-screen">
+    <div class="loading-content">
+      <h1>Kingdoms of Ash and Light</h1>
+      <p>Carregando o reino...</p>
+
+      <div class="loading-bar">
+        <div id="loading-progress"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu inicial -->
+  <main id="main-menu" class="hidden">
+    <section class="menu-content">
+      <p class="game-subtitle">RPG 3D • MUNDO ABERTO • GRATUITO</p>
+
+      <h1>Kingdoms of<br>Ash and Light</h1>
+
+      <p class="description">
+        Explore reinos, enfrente monstros, conquiste dungeons
+        e descubra o segredo do Lord Demon.
+      </p>
+
+      <button id="start-game-button" class="main-button">
+        Iniciar jogo
+      </button>
+
+      <button id="continue-button" class="secondary-button">
+        Continuar
+      </button>
+
+      <p class="no-ads">Gratuito • Sem anúncios</p>
+    </section>
+  </main>
+
+  <!-- Tela de criação do personagem -->
+  <section id="character-screen" class="screen hidden">
+    <div class="panel">
+      <h2>Crie seu personagem</h2>
+
+      <label for="player-name">Nome do personagem</label>
+      <input
+        id="player-name"
+        type="text"
+        maxlength="16"
+        placeholder="Digite seu nome"
+      >
+
+      <h3>Escolha sua raça</h3>
+
+      <div class="race-options">
+        <button class="race-card selected" data-race="elfo">
+          <span class="race-icon">🏹</span>
+          <strong>Elfo</strong>
+          <small>Começa com arco e possui muita agilidade.</small>
+        </button>
+
+        <button class="race-card" data-race="anjo">
+          <span class="race-icon">🪽</span>
+          <strong>Anjo</strong>
+          <small>Possui defesa e habilidades de cura.</small>
+        </button>
+
+        <button class="race-card" data-race="demonio">
+          <span class="race-icon">🔥</span>
+          <strong>Demônio</strong>
+          <small>Possui força e ataques de fogo.</small>
+        </button>
+      </div>
+
+      <button id="create-character-button" class="main-button">
+        Criar personagem
+      </button>
+
+      <button id="back-to-menu-button" class="secondary-button">
+        Voltar
+      </button>
+    </div>
+  </section>
+
+  <!-- Área principal do jogo 3D -->
+  <section id="game-screen" class="hidden">
+    <canvas id="game-canvas"></canvas>
+
+    <div id="game-interface">
+      <div class="top-bar">
+        <div class="player-info">
+          <strong id="display-player-name">Aventureiro</strong>
+          <span id="display-player-race">Elfo</span>
+        </div>
+
+        <div class="level-info">
+          <span>Nível <strong id="display-level">1</strong></span>
+          <div class="experience-bar">
+            <div id="experience-progress"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-bars">
+        <div class="status-row">
+          <span>Vida</span>
+          <div class="status-bar health">
+            <div id="health-progress"></div>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <span>Mana</span>
+          <div class="status-bar mana">
+            <div id="mana-progress"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-buttons">
+        <button id="stats-button">Estatísticas</button>
+        <button id="inventory-button">Inventário</button>
+        <button id="dungeon-button">Dungeons</button>
+      </div>
+
+      <div id="mobile-controls">
+        <button id="move-up">▲</button>
+
+        <div>
+          <button id="move-left">◀</button>
+          <button id="move-down">▼</button>
+          <button id="move-right">▶</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Janela de estatísticas -->
+  <div id="stats-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-button" data-close="stats-modal">×</button>
+
+      <h2>Estatísticas</h2>
+
+      <div class="stat-list">
+        <p>Vida: <strong id="stat-health">100</strong></p>
+        <p>Mana: <strong id="stat-mana">50</strong></p>
+        <p>Força: <strong id="stat-strength">10</strong></p>
+        <p>Defesa: <strong id="stat-defense">10</strong></p>
+        <p>Agilidade: <strong id="stat-agility">10</strong></p>
+        <p>Inteligência: <strong id="stat-intelligence">10</strong></p>
+      </div>
+
+      <p>Pontos disponíveis: <strong id="stat-points">0</strong></p>
+
+      <button id="reset-stats-button" class="main-button">
+        Resetar estatísticas — Grátis
+      </button>
+    </div>
+  </div>
+
+  <!-- Janela de inventário -->
+  <div id="inventory-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-button" data-close="inventory-modal">×</button>
+
+      <h2>Inventário</h2>
+
+      <div class="inventory-items">
+        <div class="item equipped">🏹<span>Arco inicial</span></div>
+        <div class="item">⚔️<span>Espada</span></div>
+        <div class="item">🪓<span>Machado</span></div>
+        <div class="item">🛡️<span>Escudo</span></div>
+      </div>
+
+      <p class="coming-soon">
+        Mais armas e roupas serão adicionadas.
+      </p>
+    </div>
+  </div>
+
+  <!-- Janela de dungeons -->
+  <div id="dungeon-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-button" data-close="dungeon-modal">×</button>
+
+      <h2>Dungeons</h2>
+
+      <div class="dungeon-card">
+        <h3>Caverna dos Goblins</h3>
+        <p>Nível recomendado: 20</p>
+        <button class="secondary-button">Entrar</button>
+      </div>
+
+      <div class="dungeon-card locked">
+        <h3>Dungeon do Lord Demon</h3>
+        <p>Nível recomendado: 1200</p>
+        <button class="secondary-button" disabled>
+          Bloqueada
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+          </html>
