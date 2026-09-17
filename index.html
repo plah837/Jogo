@@ -2,21 +2,16 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
   >
-
   <meta name="theme-color" content="#090b13">
-
   <title>Kingdoms of Ash and Light</title>
-
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <!-- Tela de carregamento -->
   <div id="loading-screen">
     <div class="loading-content">
       <h1>Kingdoms of Ash and Light</h1>
@@ -28,7 +23,6 @@
     </div>
   </div>
 
-  <!-- Menu inicial -->
   <main id="main-menu" class="hidden">
     <section class="menu-content">
       <p class="game-subtitle">RPG 3D • MUNDO ABERTO • GRATUITO</p>
@@ -52,7 +46,6 @@
     </section>
   </main>
 
-  <!-- Tela de criação do personagem -->
   <section id="character-screen" class="screen hidden">
     <div class="panel">
       <h2>Crie seu personagem</h2>
@@ -97,7 +90,6 @@
     </div>
   </section>
 
-  <!-- Área principal do jogo 3D -->
   <section id="game-screen" class="hidden">
     <canvas id="game-canvas"></canvas>
 
@@ -150,7 +142,6 @@
     </div>
   </section>
 
-  <!-- Janela de estatísticas -->
   <div id="stats-modal" class="modal hidden">
     <div class="modal-content">
       <button class="close-button" data-close="stats-modal">×</button>
@@ -174,49 +165,25 @@
     </div>
   </div>
 
-  <!-- Janela de inventário -->
   <div id="inventory-modal" class="modal hidden">
     <div class="modal-content">
       <button class="close-button" data-close="inventory-modal">×</button>
 
       <h2>Inventário</h2>
-
-      <div class="inventory-items">
-        <div class="item equipped">🏹<span>Arco inicial</span></div>
-        <div class="item">⚔️<span>Espada</span></div>
-        <div class="item">🪓<span>Machado</span></div>
-        <div class="item">🛡️<span>Escudo</span></div>
-      </div>
-
-      <p class="coming-soon">
-        Mais armas e roupas serão adicionadas.
-      </p>
     </div>
   </div>
 
-  <!-- Janela de dungeons -->
   <div id="dungeon-modal" class="modal hidden">
     <div class="modal-content">
       <button class="close-button" data-close="dungeon-modal">×</button>
 
       <h2>Dungeons</h2>
-
-      <div class="dungeon-card">
-        <h3>Caverna dos Goblins</h3>
-        <p>Nível recomendado: 20</p>
-        <button class="secondary-button">Entrar</button>
-      </div>
-
-      <div class="dungeon-card locked">
-        <h3>Dungeon do Lord Demon</h3>
-        <p>Nível recomendado: 1200</p>
-        <button class="secondary-button" disabled>
-          Bloqueada
-        </button>
-      </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
   <script src="script.js"></script>
+  <script src="game.js"></script>
+  <script src="rpg-systems.js"></script>
 </body>
-          </html>
+</html>
